@@ -73,6 +73,7 @@ The important thing to confirm was that ProcessAccess contained the LSASS target
 ## Attack
 
 I attacked via the process dumping tool (procdump) which tried to assess lsass.exe but failed due to system securtiy :
+<img width="1115" height="250" alt="a1" src="https://github.com/user-attachments/assets/a50ecfa1-d001-4837-8cda-c4213717b51b" />
 
 
 ## Detection
@@ -95,6 +96,9 @@ Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" |
 Where-Object {$_.Id -eq 10} |
 Select-Object -First 10
 ```
+Then I checked the detailed log from Eventviewer:
+<img width="1479" height="738" alt="e1" src="https://github.com/user-attachments/assets/674c39ae-8457-4ca7-836a-406a71b51cad" />
+
 
 The detection should identify events where the target process is lsass.exe.
 
@@ -129,12 +133,14 @@ Once the Sysmon event is successfully forwarded through Winlogbeat and Logstash 
 ```text
 event.code: 10
 ```
+<img width="1625" height="719" alt="elk1" src="https://github.com/user-attachments/assets/8bdd8128-afb5-4402-baba-1243f4218f96" />
 
 A more focused query is:
 
 ```text
 event.code: 10 AND winlog.event_data.TargetImage: "*lsass.exe"
 ```
+<img width="1632" height="567" alt="elk2" src="https://github.com/user-attachments/assets/307a34ac-e550-4f8a-82b1-e025c6eefa9b" />
 
 Depending on the ECS mapping, the TargetImage field may need to be searched directly.
 
