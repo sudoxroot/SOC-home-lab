@@ -10,7 +10,7 @@ The investigation was performed using Sysmon, Windows Security logs, Microsoft D
 
 ## Lab Environment
 
-Attacker: Kali Linux  
+  
 Victim: Windows  
 SIEM: ELK Stack  
 Endpoint Telemetry: Sysmon  
@@ -66,11 +66,15 @@ The observed commands included:
 `C:\Windows\System32\reg.exe save HKLM\SAM C:\Temp\sam_lab\sam.save`  
 `C:\Windows\System32\reg.exe save HKLM\SYSTEM C:\Temp\sam_lab\system.save`  
 The Defender telemetry showed `ActionSuccess: True`, confirming that Defender successfully handled the detected activity.
+<img width="604" height="52" alt="a1" src="https://github.com/user-attachments/assets/34f6e27b-1f96-4387-9275-aa68fe400b99" />
+
 
 ## Detection Logic
 
 The main detection opportunity is suspicious use of `reg.exe` to save sensitive registry hives.  
 A useful detection condition is:  
+<img width="1296" height="615" alt="e1" src="https://github.com/user-attachments/assets/a0e2cb27-e322-473e-a3eb-f0df33684bc0" />
+
 `process.name: reg.exe`  
 combined with:  
 `process.command_line: *save*`  
@@ -80,7 +84,7 @@ or:
 `process.command_line: *HKLM\SYSTEM*`  
 The goal is to detect the combination of the executable and suspicious command line rather than alerting on every normal use of `reg.exe`.
 
-## Detection Query
+
 
 ### Kibana KQL
 
@@ -91,6 +95,7 @@ SYSTEM hive:
 Broader hunt:  
 `process.name : "reg.exe" and process.command_line : ("*HKLM\\SAM*" or "*HKLM\\SYSTEM*")`  
 Field names can vary depending on the Winlogbeat and ECS configuration, so the raw Sysmon event should be checked if the query does not return results.
+<img width="1917" height="842" alt="elk1" src="https://github.com/user-attachments/assets/8c38d4b9-1c95-4c75-bf29-d4d52bf76453" />
 
 ## Investigation
 
@@ -155,23 +160,7 @@ One of the main lessons from this lab was that a blocked attack may not produce 
 If Defender stops the operation before a file is created, there may be no corresponding FileCreate event.  
 This is why process telemetry, endpoint protection alerts, and SIEM data should be investigated together.
 
-## Screenshots
 
-The repository includes screenshots covering the main stages of the investigation:
-
-1. Sysmon Event ID 1 showing process creation telemetry.
-    
-2. The `reg.exe` SAM command and corresponding Defender detection.
-    
-3. Microsoft Defender detecting the `reg.exe save HKLM\SAM` attempt.
-    
-4. Microsoft Defender detecting the `reg.exe save HKLM\SYSTEM` attempt.
-    
-5. The empty `C:\Temp\sam_lab` directory confirming the files were not created.
-    
-6. Kibana showing the relevant Sysmon process creation event.
-    
-7. Kibana showing the query used to hunt for suspicious `reg.exe` activity.
     
 
 ## Conclusion
