@@ -40,12 +40,14 @@ The task was manually executed for testing:
 ```powershell
 schtasks /run /tn "SOC-Lab-Test2"
 ```
+<img width="834" height="241" alt="a1" src="https://github.com/user-attachments/assets/d067d8da-a36d-4fff-9d3f-64dc3b0841d1" />
 
 The resulting file was checked to confirm that the task executed successfully:
 
 ```powershell
 Get-Content C:\SOC-Lab\execution.log
 ```
+<img width="778" height="31" alt="e1" src="https://github.com/user-attachments/assets/f97a9632-d373-47ca-a28d-71bb3cd4ad68" />
 
 ## Detection
 
@@ -94,6 +96,8 @@ UtcTime
 The command line was especially useful because it showed that `schtasks.exe` was being used to create the scheduled task.
 
 The parent process was also reviewed to determine whether the activity originated from PowerShell, Command Prompt, an interactive user session or another process.
+I also checked the Event ID 4698 cuz it was generated when a scheduled task is assigned to the system:
+<img width="1340" height="749" alt="e2" src="https://github.com/user-attachments/assets/38a3d9c5-a06f-4f13-83a3-9b5b39ab4a67" />
 
 ## Detection Query
 
@@ -116,6 +120,7 @@ event.code:"4698" AND winlog.event_data.TaskContent:*powershell*
 ```
 
 The exact field names may vary depending on the Winlogbeat and ECS configuration, so the raw Event ID 4698 document should be inspected first if these fields do not return results.
+<img width="1637" height="774" alt="elk1" src="https://github.com/user-attachments/assets/cdf724f4-e515-42c6-a44d-5f665a0966b8" />
 
 ## Investigation Steps
 
