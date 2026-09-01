@@ -30,6 +30,7 @@ $cmd = 'Get-Date'
 $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
 powershell.exe -NoProfile -EncodedCommand $encoded
 ```
+<img width="1218" height="180" alt="a1" src="https://github.com/user-attachments/assets/3fc83091-b955-47c1-b4d4-a3c1df67abd3" />
 
 The purpose of using the encoded command was to reproduce a behavior that defenders may want to investigate without executing malicious code.
 
@@ -44,6 +45,7 @@ Microsoft-Windows-PowerShell/Operational
 
 The main event used during the investigation was Event ID 4104.  
 Event 4104 provides visibility into PowerShell script block execution and is one of the telemetry sources used by MITRE's current PowerShell detection strategy.
+<img width="1282" height="43" alt="e2" src="https://github.com/user-attachments/assets/a9467867-d4b6-4499-a434-fd47d3387cd3" />
 
 ## Sysmon Telemetry
 
@@ -61,6 +63,7 @@ ProcessId
 
 The command line and parent process are particularly useful because they provide context around how PowerShell was started.  
 MITRE's detection guidance specifically recommends looking at encoded or obfuscated PowerShell arguments and abnormal process lineage instead of treating every PowerShell execution as malicious.
+<img width="1400" height="509" alt="e1" src="https://github.com/user-attachments/assets/bf7ea16f-840f-401e-b4d9-db8b6e9b00dc" />
 
 ## Detection Logic
 
@@ -79,6 +82,7 @@ event.code: "1"
 AND process.name: "powershell.exe"
 AND process.command_line: (*-enc* OR *-encodedcommand* OR *-nop* OR *-noprofile*)
 ```
+<img width="1636" height="775" alt="elk2" src="https://github.com/user-attachments/assets/3feb35b6-4fbe-4665-9eee-379469f59bd6" />
 
 The exact field names may vary depending on the Winlogbeat and ECS mapping used in the environment.  
 Another useful query is:
@@ -86,6 +90,7 @@ Another useful query is:
 ```text
 event.code: "4104"
 ```
+<img width="1742" height="831" alt="elk1" src="https://github.com/user-attachments/assets/3864a762-6be3-421d-9ee6-e39ef793770a" />
 
 This allows the analyst to inspect the actual PowerShell script block associated with the activity.
 
