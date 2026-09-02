@@ -8,7 +8,7 @@ The simulation was performed on a Windows lab machine using PowerShell. The main
 
 ## Lab Environment
 
-**Attacker:** Kali Linux  
+
 **Victim:** Windows 10/11  
 **Monitoring:** Sysmon  
 **Log Collection:** Winlogbeat  
@@ -35,6 +35,7 @@ The configuration was also checked with:
 ```powershell
 Get-MpPreference | Select-Object DisableRealtimeMonitoring
 ```
+<img width="957" height="213" alt="a1" src="https://github.com/user-attachments/assets/d5d45af6-091d-4ec7-9e7a-04e51550d39b" />
 
 If Tamper Protection prevents the change, the command may fail. This is still useful from a detection perspective because the attempted modification itself is suspicious and can generate relevant telemetry.
 
@@ -60,6 +61,7 @@ The command line was then inspected for Defender configuration changes such as:
 Set-MpPreference
 DisableRealtimeMonitoring
 ```
+<img width="1513" height="672" alt="e1" src="https://github.com/user-attachments/assets/ec781dfe-39a1-4744-94bf-1bcc0794b48d" />
 
 A useful Kibana query for the collected ECS data is:
 
@@ -74,6 +76,7 @@ process.name : "powershell.exe" AND process.command_line : "*DisableRealtimeMoni
 ```
 
 If the command line is stored inside the raw event message instead of an ECS field, searching for `Set-MpPreference` or `DisableRealtimeMonitoring` in the event message can also be useful.
+<img width="1928" height="647" alt="elk1" src="https://github.com/user-attachments/assets/427a5d73-9e2c-4831-81e1-88e88c3df36f" />
 
 ## PowerShell Telemetry
 
@@ -159,9 +162,6 @@ Attackers may first try to weaken the security controls protecting the endpoint.
 A PowerShell command that attempts to disable Defender can therefore become an important early warning signal.  
 The strongest detection comes from correlating the Defender modification with the user, parent process, command line, PowerShell telemetry, and the activity that happens immediately before and after it.
 
-## Evidence
-
-Screenshots included with this lab show the PowerShell execution, generated Windows/Sysmon telemetry, and the corresponding Kibana detection.
 
 ## References
 
